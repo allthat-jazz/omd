@@ -7,10 +7,17 @@ orders: list[dict] = [
     {"id": 6, "buyer": "gleb", "status": "returned", "amount": 2_100},
 ]
 
-returned = [o for o in orders if o["status"] == "returned"]
-delivered = [o for o in orders if o["status"] == "delivered"]
 
-print("сумма возвратов:", sum(o["amount"] for o in returned))
-print("вернули заказ:", {o["buyer"] for o in returned})
-print("доставлено заказов:", len(delivered))
-print("средний чек:", sum(o["amount"] for o in delivered) / len(delivered))
+def main() -> None:
+    returned = [o for o in orders if o["status"] == "returned"]
+    delivered = [o for o in orders if o["status"] == "delivered"]
+
+    print("сумма возвратов:", sum(o["amount"] for o in returned))
+    print("вернули заказ:", {o["buyer"] for o in returned})
+    print("доставлено заказов:", len(delivered))
+    print("средний чек:",
+          sum(o["amount"] for o in delivered) / len(delivered))
+
+
+if __name__ == "__main__":
+    main()

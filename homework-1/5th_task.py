@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 reviews: list[dict] = [
     {"id": 1, "product": "Чехол", "stars": 5},
     {"id": 1, "product": "Чехол", "stars": 3},
@@ -11,21 +13,28 @@ reviews: list[dict] = [
     {"id": 5, "product": "Кабель", "stars": 1},
 ]
 
-names = {r["product"].capitalize() for r in reviews}
 
-worst = None
-worst_avg = None
-for name in names:
-    marks = [r["stars"] for r in reviews if r["product"].capitalize() == name]
-    avg = sum(marks) / len(marks)
-    print(name, avg)
+def main() -> None:
+    marks_by_name: defaultdict[str, list[int]] = defaultdict(list)
+    for r in reviews:
+        marks_by_name[r["product"].capitalize()].append(r["stars"])
 
-    if len(marks) >= 2 and (worst is None or avg < worst_avg):
-        worst = name
-        worst_avg = avg
+    worst = None
+    worst_avg = None
+    for name, marks in marks_by_name.items():
+        avg = sum(marks) / len(marks)
+        print(name, avg)
 
-print("худший (от 2 отзывов):", worst)
+        if len(marks) >= 2 and (worst_avg is None or avg < worst_avg):
+            worst = name
+            worst_avg = avg
 
-low = [r for r in reviews if r["stars"] <= 2]
-print("отзывов на 1–2 звезды:", len(low))
-print("доля:", len(low) / len(reviews))
+    print("худший (от 2 отзывов):", worst)
+
+    low = [r for r in reviews if r["stars"] <= 2]
+    print("отзывов на 1–2 звезды:", len(low))
+    print("доля:", len(low) / len(reviews))
+
+
+if __name__ == "__main__":
+    main()
