@@ -10,44 +10,53 @@ def read_file(filename):
         reader = csv.reader(f, delimiter=";")
         next(reader)
         for row in reader:
-            if len(row) == 6:
-                rows.append(row)
+            if len(row) != 6:
+                raise ValueError(
+                    f"{filename}, строка {reader.line_num}: "
+                    f"ожидалось 6 полей, получено {len(row)}"
+                )
+            rows.append(row)
     return rows
 
 
 def hierarchy(rows):
     result = {}
     for row in rows:
-        dep = row[1]
+        department = row[1]
         team = row[2]
-        if dep not in result:
-            result[dep] = []
-        if team not in result[dep]:
-            result[dep].append(team)
+        if department not in result:
+            result[department] = []
+        if team not in result[department]:
+            result[department].append(team)
     return result
 
 
 def summary(rows):
-    salaries = {}
+    salaries_by_department = {}
     for row in rows:
-        dep = row[1]
+        department = row[1]
         salary = float(row[5])
-        if dep not in salaries:
-            salaries[dep] = []
-        salaries[dep].append(salary)
+        if department not in salaries_by_department:
+            salaries_by_department[department] = []
+        salaries_by_department[department].append(salary)
 
     result = []
-    for dep in salaries:
-        s = salaries[dep]
-        result.append([dep, len(s), min(s), max(s), round(sum(s) / len(s), 2)])
+    for department, salaries in salaries_by_department.items():
+        result.append([
+            department,
+            len(salaries),
+            min(salaries),
+            max(salaries),
+            round(sum(salaries) / len(salaries), 2),
+        ])
     return result
 
 
 def print_hierarchy(rows):
     data = hierarchy(rows)
-    for dep in data:
-        print(dep)
-        for team in data[dep]:
+    for department in data:
+        print(department)
+        for team in data[department]:
             print("   -", team)
 
 
